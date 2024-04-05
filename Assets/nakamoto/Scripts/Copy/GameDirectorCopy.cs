@@ -1,7 +1,7 @@
 //
 // ゲームディレクターコピースクリプト
 // Name:中本健太 Date:02/07
-// Update:03/13
+// Update:04/05
 //
 using System.Collections;
 using System.Collections.Generic;
@@ -112,7 +112,7 @@ public class GameDirectorCopy : MonoBehaviour
     /// <summary>
     /// プレイヤーの移動判定変数
     /// </summary>
-    bool isMoved = false;
+    bool isMoved;
 
     /// <summary>
     /// プレイヤータイプ
@@ -337,6 +337,11 @@ public class GameDirectorCopy : MonoBehaviour
         //++++++++++++++++++++++++++++++++++++++
         generateFlag = false;
 
+        //++++++++++++++++++++++++++++++++++++++
+        // 移動フラグ
+        //++++++++++++++++++++++++++++++++++++++
+        isMoved = true;
+
         for (int i = 0; i < player.Length; i++)
         { //配列分のプレイヤーの構造体を生成
             player[i] = new Player();
@@ -447,6 +452,12 @@ public class GameDirectorCopy : MonoBehaviour
 
         // 1Pの移動アイコンを表示
         SetMoveIcon(1, true);
+
+        if(NetworkManager.MyNo == 1)
+        {   // 1Pの生成ボタンを非表示に
+            brewingButton[NetworkManager.MyNo - 1].SetActive(false);
+            cantBrewingButton[NetworkManager.MyNo - 1].SetActive(true);
+        }
 
         nowTurn = 0;
         nextMode = MODE.MOVE_SELECT;
@@ -565,7 +576,6 @@ public class GameDirectorCopy : MonoBehaviour
             {
                 if (Input.GetMouseButtonDown(0))
                 { //クリック時、ユニット選択
-                    isMoved = false;
                     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                     RaycastHit hit;
 
@@ -582,6 +592,9 @@ public class GameDirectorCopy : MonoBehaviour
 
                             if (0 < unitData[z, x].Count && player[nowTurn].PlayerNo == unitData[z, x][0].GetComponent<UnitController>().PlayerNo)
                             {   // ユニット選択(選択したマスのユニット数が0以上・現在のPLターンとクリックしたタイルのユニットのPLNoが一致してたら)
+
+                                // 移動可能フラグをfalseに
+                                isMoved = false;
 
                                 //++++++++++++++++++++++++++++++++++++++++++++++++++++//
                                 // 現PLターンの「選択した」という情報をサーバーに送る //
@@ -924,13 +937,10 @@ public class GameDirectorCopy : MonoBehaviour
     /// </summary>
     void ThrowPotionMode()
     {
-        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        // 自分のターンのみ行動可能に
         if (NetworkManager.MyNo == nowPlayerType + 1)
-        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        {
+        {   // 自分のターンのみ行動可能に
             if (Input.GetMouseButtonDown(0))
-            { //クリック時、投擲位置を設定
+            {   //クリック時、投擲位置を設定
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
 
@@ -946,6 +956,11 @@ public class GameDirectorCopy : MonoBehaviour
 
                             // 設置情報をサーバーに送信
                             networkManager.SendThrowPos(selectPos.x, selectPos.z);
+
+                            // ポーション生成可能に
+                            generateFlag = false;
+                            brewingButton[NetworkManager.MyNo - 1].SetActive(true);
+                            cantBrewingButton[NetworkManager.MyNo - 1].SetActive(false);
                         }
                     }
                 }
@@ -1001,7 +1016,6 @@ public class GameDirectorCopy : MonoBehaviour
             BoomPotion2[nowPlayerType].SetActive(false);                //使用したポーションのアイコンを消す
             player[nowPlayerType].OwnedPotionList.Remove(TYPE.BOMB2);    //使用したポーションをリストから削除する
         }
-        
 
         Vector3 PlPos = SerchUnit((nowPlayerType + 1));
 
@@ -1012,7 +1026,9 @@ public class GameDirectorCopy : MonoBehaviour
 
         string resname = "BombPotion";
         resourcesInstantiate(resname, pos, Quaternion.Euler(0, 0, 0));
-        nextMode = MODE.FIELD_UPDATE;
+
+        // 移動モードに戻る
+        nowMode = MODE.MOVE_SELECT;
     }
     //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -1021,6 +1037,11 @@ public class GameDirectorCopy : MonoBehaviour
     /// </summary>
     public void UsePotion(int buttonNum)
     {
+        if (!isMoved)
+        {   // 移動中の時は使用できない
+            return;
+        }
+
         //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // 自分のターンのみ行動可能に
         if (NetworkManager.MyNo == nowPlayerType + 1)
