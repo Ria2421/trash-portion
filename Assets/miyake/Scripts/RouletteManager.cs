@@ -12,7 +12,6 @@ using UnityEngine.UI;
 public class RouletteManager : MonoBehaviour
 {
     public float rouletteSpeed = 0;        //回転速度
-    public GameObject verygood;
     public GameObject good;
     public GameObject bad;
     public GameObject roulette;            //ルーレット本体
@@ -24,7 +23,6 @@ public class RouletteManager : MonoBehaviour
     bool isLimit;                     //制限時間を超えたかどうか
     bool gameFlag;
     NetworkManager networkManager;
-    [SerializeField] AudioClip veryGoodSE;      //大成功SE
     [SerializeField] AudioClip goodSE;          //成功SE
     [SerializeField] AudioClip badSE;           //失敗SE
     [SerializeField] AudioSource audioSource;
@@ -73,58 +71,15 @@ public class RouletteManager : MonoBehaviour
     {
 
         angle = roulette.transform.eulerAngles.y;
-        float angleA = (174 + angle) % 360;     //大成功の端
-        float angleB = (201 + angle) % 360;     //大成功の端
-        float angleC = (133 + angle) % 360;     //成功の端
-        float angleD = (244 + angle) % 360;     //成功の端
+        float angleA = (156 + angle) % 360;     //成功の端
+        float angleB = (200 + angle) % 360;     //成功の端
 
         if (!gameFlag)
         {
-            //大成功
+            //成功
             if (angleA > angleB)
             {//360度を超えていたら
                 if ((angleA <= transform.eulerAngles.y && transform.eulerAngles.y <= 360) || (0 <= transform.eulerAngles.y && transform.eulerAngles.y <= angleB))
-                {
-                    //大成功SE
-                    audioSource.PlayOneShot(veryGoodSE);
-
-                    verygood.SetActive(true);
-
-                    // 生成情報の送信
-                    networkManager.SendPotionStatus((int)EventID.PotionComplete);
-                    gameFlag = true;
-
-                    // ミニゲームの終了
-                    Invoke("MiniGameDestroy", 1.5f);
-
-                    return;
-                }
-            }
-            else
-            {
-                if (transform.eulerAngles.y >= angleA && transform.eulerAngles.y <= angleB)
-                {
-                    //大成功SE
-                    audioSource.PlayOneShot(veryGoodSE);
-
-                    verygood.SetActive(true);
-
-                    // 生成情報の送信
-                    networkManager.SendPotionStatus((int)EventID.PotionComplete);
-                    gameFlag = true;
-
-                    // ミニゲームの終了
-                    Invoke("MiniGameDestroy", 1.5f);
-
-                    return;
-                }
-            }
-
-
-            //成功
-            if (angleC > angleD)
-            {
-                if ((angleC <= transform.eulerAngles.y && transform.eulerAngles.y <= 360) || (0 <= transform.eulerAngles.y && transform.eulerAngles.y <= angleD))
                 {
                     //成功SE
                     audioSource.PlayOneShot(goodSE);
@@ -143,7 +98,7 @@ public class RouletteManager : MonoBehaviour
             }
             else
             {
-                if (transform.eulerAngles.y >= angleC && transform.eulerAngles.y <= angleD)
+                if (transform.eulerAngles.y >= angleA && transform.eulerAngles.y <= angleB)
                 {
                     //成功SE
                     audioSource.PlayOneShot(goodSE);

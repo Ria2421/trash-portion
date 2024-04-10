@@ -12,7 +12,6 @@ public class TestTubeManager : MonoBehaviour
 {
     [SerializeField] float speed;
     public GameObject good;
-    public GameObject veryGood;
     public GameObject Bad;
     public Slider slider;
     public Text timerText;
@@ -20,7 +19,6 @@ public class TestTubeManager : MonoBehaviour
     bool endCountDown;
     NetworkManager networkManager;
     bool gameFlag;
-    [SerializeField] AudioClip veryGoodSE;      //‘å¬Œ÷SE
     [SerializeField] AudioClip goodSE;          //¬Œ÷SE
     [SerializeField] AudioClip badSE;           //¸”sSE
     [SerializeField] AudioSource audioSource;
@@ -57,25 +55,16 @@ public class TestTubeManager : MonoBehaviour
                         networkManager.SendPotionStatus((int)EventID.PotionFailure);
                         gameFlag = true;
                     }
-                    else if (slider.value >= 68 && slider.value < 84)
-                    {   // ¬Œ÷
+                    else if (slider.value >= 67 && slider.value < 94)
+                    {   // ‘å¬Œ÷
                         good.SetActive(true);
-                        //¬Œ÷SE
+                        //‘å¬Œ÷SE
                         audioSource.PlayOneShot(goodSE);
                         // ¶¬î•ñ‚Ì‘—M
                         networkManager.SendPotionStatus((int)EventID.PotionComplete);
                         gameFlag = true;
                     }
-                    else if (slider.value >= 84 && slider.value < 94)
-                    {   // ‘å¬Œ÷
-                        veryGood.SetActive(true);
-                        //‘å¬Œ÷SE
-                        audioSource.PlayOneShot(veryGoodSE);
-                        // ¶¬î•ñ‚Ì‘—M
-                        networkManager.SendPotionStatus((int)EventID.PotionComplete);
-                        gameFlag = true;
-                    }
-                    else if (slider.value < 68)
+                    else if (slider.value < 66)
                     {   // ¸”s
                         Bad.SetActive(true);
                         //¸”sSE

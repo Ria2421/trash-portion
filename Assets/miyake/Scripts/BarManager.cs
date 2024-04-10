@@ -12,7 +12,6 @@ public class BarManager : MonoBehaviour
 {
     [SerializeField] float speed;
     public GameObject good;
-    public GameObject veryGood;
     public GameObject Bad;
     public Slider slider;
     public Text timerText;
@@ -21,7 +20,6 @@ public class BarManager : MonoBehaviour
     bool endCountDown;
     NetworkManager networkManager;
     bool gameFlag;
-    [SerializeField] AudioClip veryGoodSE;      //‘å¬Œ÷SE
     [SerializeField] AudioClip goodSE;          //¬Œ÷SE
     [SerializeField] AudioClip badSE;           //¸”sSE
     [SerializeField] AudioSource audioSource;
@@ -55,17 +53,8 @@ public class BarManager : MonoBehaviour
                 {
                     if (slider.value >= 85)
                     {   // ‘å¬Œ÷
-                        veryGood.SetActive(true);
-                        //‘å¬Œ÷SE
-                        audioSource.PlayOneShot(veryGoodSE);
-                        // ¶¬î•ñ‚Ì‘—M
-                        networkManager.SendPotionStatus((int)EventID.PotionComplete);
-                        gameFlag = true;
-                    }
-                    else if (slider.value >= 50)
-                    {   // ¬Œ÷
                         good.SetActive(true);
-                        //¬Œ÷SE
+                        //‘å¬Œ÷SE
                         audioSource.PlayOneShot(goodSE);
                         // ¶¬î•ñ‚Ì‘—M
                         networkManager.SendPotionStatus((int)EventID.PotionComplete);
