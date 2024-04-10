@@ -1642,6 +1642,11 @@ PrefabInstance:
       propertyPath: audioSource
       value: 
       objectReference: {fileID: 2918537283349841157}
+    - target: {fileID: 4934860884067875741, guid: 683395fe181358a4cadc0f2268fa6242,
+        type: 3}
+      propertyPath: rouletteSpeed
+      value: -7
+      objectReference: {fileID: 0}
     - target: {fileID: 6357393863717404928, guid: 683395fe181358a4cadc0f2268fa6242,
         type: 3}
       propertyPath: m_Name
