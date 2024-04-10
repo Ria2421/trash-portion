@@ -60,7 +60,7 @@ public class BarManager : MonoBehaviour
                         networkManager.SendPotionStatus((int)EventID.PotionComplete);
                         gameFlag = true;
                     }
-                    else if (slider.value < 50)
+                    else if (slider.value < 85)
                     {   // Ž¸”s
                         Bad.SetActive(true);
                         //Ž¸”sSE
