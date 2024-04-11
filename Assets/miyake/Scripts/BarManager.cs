@@ -92,11 +92,11 @@ public class BarManager : MonoBehaviour
                 //フラグによるスライダー値の増減
                 if (maxValue)
                 {
-                    slider.value -= speed;
+                    slider.value -= speed * Time.deltaTime;
                 }
                 else
                 {
-                    slider.value += speed;
+                    slider.value += speed * Time.deltaTime;
                 }
             }
         }

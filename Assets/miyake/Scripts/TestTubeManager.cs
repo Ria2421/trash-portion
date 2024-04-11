@@ -82,7 +82,7 @@ public class TestTubeManager : MonoBehaviour
             //クリックされていなければ実行
             if (Input.GetMouseButton(0))
             {
-                slider.value += speed;
+                slider.value += speed * Time.deltaTime;
 
                 if (slider.value >= 94)
                 {
