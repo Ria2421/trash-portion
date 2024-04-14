@@ -154,35 +154,55 @@ public class GameDirectorCopy : MonoBehaviour
         get { return isMoved; }
     }
 
-    // ターン表示テキスト
+    /// <summary>
+    /// ターン表示テキスト
+    /// </summary>
     [SerializeField] GameObject turnText;
 
-    // 累計ターン表示テキスト
+    /// <summary>
+    /// 累計ターン表示テキスト
+    /// </summary>
     [SerializeField] Text allTurnText;
 
-    // PLNo決め打ち用
+    /// <summary>
+    /// PLNo決め打ち用
+    /// </summary>
     [SerializeField] int plNo;
 
-    // ミニゲームプレハブ
+    /// <summary>
+    /// ミニゲームプレハブ
+    /// </summary>
     [SerializeField] GameObject minigamePrefab;
 
-    // 全PLのポーションステータス格納用
+    /// <summary>
+    /// 全PLのポーションステータス格納用
+    /// </summary>
     List<GameObject[]> allPotionStatus;
 
-    // 累計ターン格納用
+    /// <summary>
+    /// 累計ターン格納用
+    /// </summary>
     public static int AllTurnNum
     { get; set; }
 
-    // NetworkManager格納用変数
+    /// <summary>
+    /// NetworkManager格納用変数
+    /// </summary>
     NetworkManager networkManager;
 
-    // 指定タイルのpos格納用
+    /// <summary>
+    /// 指定タイルのpos格納用
+    /// </summary>
     Vector3 tilePos;
 
-    // ポーション生成フラグ
+    /// <summary>
+    /// ポーション生成フラグ
+    /// </summary>
     bool generateFlag;
 
-    // 勝利テキスト格納用
+    /// <summary>
+    /// 勝利テキスト格納用
+    /// </summary>
     [SerializeField] GameObject winText;
 
     /// <summary>
@@ -191,41 +211,63 @@ public class GameDirectorCopy : MonoBehaviour
     [SerializeField] GameObject[] BoomPotion1;
     [SerializeField] GameObject[] BoomPotion2;
 
-    // キャラ移動アイコン格納用
+    /// <summary>
+    /// キャラ移動アイコン格納用
+    /// </summary>
     GameObject[] moveImgs = new GameObject[playerNum];
 
-    // キャラ生成アイコン格納用
+    /// <summary>
+    /// キャラ生成アイコン格納用
+    /// </summary>
     GameObject[] generateImgs = new GameObject[playerNum];
 
-    // 死亡人数カウント用変数
+    /// <summary>
+    /// 死亡人数カウント用変数
+    /// </summary>
     public int DeadPlayerCnt
     { get; private set; }
 
-    // 勝利PLNo
+    /// <summary>
+    /// 勝利PLNo
+    /// </summary>
     int winnerNum;
 
-    // GameEndフラグ
+    /// <summary>
+    /// GameEndフラグ
+    /// </summary>
     bool gameEnd = false;
 
-    // 生成ボタンオブジェクト
+    /// <summary>
+    /// 生成ボタンオブジェクト
+    /// </summary>
     [SerializeField] GameObject[] brewingButton;
 
-    // 生成禁止ボタンオブジェクト
+    /// <summary>
+    /// 生成禁止ボタンオブジェクト
+    /// </summary>
     [SerializeField] GameObject[] cantBrewingButton;
 
-    // 各PLのポーションステータス (4種類) [0.完了  1.失敗  2.生成  3.待機]
+    /// <summary>
+    /// 各PLのポーションステータス (4種類) [0.完了  1.失敗  2.生成  3.待機]
+    /// </summary>
     [SerializeField] GameObject[] potionStatus1;
     [SerializeField] GameObject[] potionStatus2;
     [SerializeField] GameObject[] potionStatus3;
     [SerializeField] GameObject[] potionStatus4;
 
-    // キャラノーマルアイコン
+    /// <summary>
+    /// キャラノーマルアイコン
+    /// </summary>
     [SerializeField] GameObject[] normalIcons;
 
-    // キャラデスアイコン
+    /// <summary>
+    /// キャラデスアイコン
+    /// </summary>
     [SerializeField] GameObject[] deathIcons;
 
-    // プレイヤー名格納用テキスト
+    /// <summary>
+    /// プレイヤー名格納用テキスト
+    /// </summary>
     [SerializeField] Text[] playerNameText;
 
     ///========================================
