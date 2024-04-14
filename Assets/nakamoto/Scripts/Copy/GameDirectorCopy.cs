@@ -1,7 +1,7 @@
 //
 // ゲームディレクターコピースクリプト
 // Name:中本健太 Date:02/07
-// Update:04/05
+// Update:04/15
 //
 using System.Collections;
 using System.Collections.Generic;
@@ -154,55 +154,35 @@ public class GameDirectorCopy : MonoBehaviour
         get { return isMoved; }
     }
 
-    //+++++++++++++++++++++++++++++++++++++++++
     // ターン表示テキスト
-    //+++++++++++++++++++++++++++++++++++++++++
     [SerializeField] GameObject turnText;
 
-    //+++++++++++++++++++++++++++++++++++++++++
     // 累計ターン表示テキスト
-    //+++++++++++++++++++++++++++++++++++++++++
     [SerializeField] Text allTurnText;
 
-    //+++++++++++++++++++++++++++++++++++++++++
     // PLNo決め打ち用
-    //+++++++++++++++++++++++++++++++++++++++++
     [SerializeField] int plNo;
 
-    //+++++++++++++++++++++++++++++++++++++++++
     // ミニゲームプレハブ
-    //+++++++++++++++++++++++++++++++++++++++++
     [SerializeField] GameObject minigamePrefab;
 
-    //+++++++++++++++++++++++++++++++++++++++++
     // 全PLのポーションステータス格納用
-    //+++++++++++++++++++++++++++++++++++++++++
     List<GameObject[]> allPotionStatus;
 
-    //+++++++++++++++++++++++++++++++++++++++++
     // 累計ターン格納用
-    //+++++++++++++++++++++++++++++++++++++++++
     public static int AllTurnNum
     { get; set; }
 
-    //+++++++++++++++++++++++++++++++++++++++++
     // NetworkManager格納用変数
-    //+++++++++++++++++++++++++++++++++++++++++
     NetworkManager networkManager;
 
-    //+++++++++++++++++++++++++++++++++++++++++
     // 指定タイルのpos格納用
-    //+++++++++++++++++++++++++++++++++++++++++
     Vector3 tilePos;
 
-    //+++++++++++++++++++++++++++++++++++++++++
     // ポーション生成フラグ
-    //+++++++++++++++++++++++++++++++++++++++++
     bool generateFlag;
 
-    //+++++++++++++++++++++++++++++++++++++++++
     // 勝利テキスト格納用
-    //+++++++++++++++++++++++++++++++++++++++++
     [SerializeField] GameObject winText;
 
     /// <summary>
@@ -211,63 +191,41 @@ public class GameDirectorCopy : MonoBehaviour
     [SerializeField] GameObject[] BoomPotion1;
     [SerializeField] GameObject[] BoomPotion2;
 
-    //+++++++++++++++++++++++++++++++++++++++++
     // キャラ移動アイコン格納用
-    //+++++++++++++++++++++++++++++++++++++++++
     GameObject[] moveImgs = new GameObject[playerNum];
 
-    //+++++++++++++++++++++++++++++++++++++++++
     // キャラ生成アイコン格納用
-    //+++++++++++++++++++++++++++++++++++++++++
     GameObject[] generateImgs = new GameObject[playerNum];
 
-    //+++++++++++++++++++++++++++++++++++++++++
     // 死亡人数カウント用変数
-    //+++++++++++++++++++++++++++++++++++++++++
-    int deadPlayerCnt;
+    public int DeadPlayerCnt
+    { get; private set; }
 
-    //+++++++++++++++++++++++++++++++++++++++++
     // 勝利PLNo
-    //+++++++++++++++++++++++++++++++++++++++++
     int winnerNum;
 
-    //+++++++++++++++++++++++++++++++++++++++++
     // GameEndフラグ
-    //+++++++++++++++++++++++++++++++++++++++++
     bool gameEnd = false;
 
-    //+++++++++++++++++++++++++++++++++++++++++
     // 生成ボタンオブジェクト
-    //+++++++++++++++++++++++++++++++++++++++++
     [SerializeField] GameObject[] brewingButton;
 
-    //+++++++++++++++++++++++++++++++++++++++++
     // 生成禁止ボタンオブジェクト
-    //+++++++++++++++++++++++++++++++++++++++++
     [SerializeField] GameObject[] cantBrewingButton;
 
-    //+++++++++++++++++++++++++++++++++++++++++
-    // 各PLのポーションステータス (4種類)
-    // [0.完了  1.失敗  2.生成  3.待機]
-    //+++++++++++++++++++++++++++++++++++++++++
+    // 各PLのポーションステータス (4種類) [0.完了  1.失敗  2.生成  3.待機]
     [SerializeField] GameObject[] potionStatus1;
     [SerializeField] GameObject[] potionStatus2;
     [SerializeField] GameObject[] potionStatus3;
     [SerializeField] GameObject[] potionStatus4;
 
-    //+++++++++++++++++++++++++++++++++++++++++
     // キャラノーマルアイコン
-    //+++++++++++++++++++++++++++++++++++++++++
     [SerializeField] GameObject[] normalIcons;
 
-    //+++++++++++++++++++++++++++++++++++++++++
     // キャラデスアイコン
-    //+++++++++++++++++++++++++++++++++++++++++
     [SerializeField] GameObject[] deathIcons;
 
-    //+++++++++++++++++++++++++++++++++++++++++
     // プレイヤー名格納用テキスト
-    //+++++++++++++++++++++++++++++++++++++++++
     [SerializeField] Text[] playerNameText;
 
     ///========================================
@@ -281,25 +239,17 @@ public class GameDirectorCopy : MonoBehaviour
     /// </summary>
     void Start()
     {
-        //++++++++++++++++++++++++++++++++++++++
         // 累計ターンの初期化
-        //++++++++++++++++++++++++++++++++++++++
         AllTurnNum = 1;
 
-        //++++++++++++++++++++++++++++++++++++++
         // 仮PLNoの代入
-        //++++++++++++++++++++++++++++++++++++++
 #if DEBUG
         //NetworkManager.MyNo = plNo;
 #endif
-        //++++++++++++++++++++++++++++++++++++++
         // 自分の生成ボタンを表示
-        //++++++++++++++++++++++++++++++++++++++
         brewingButton[NetworkManager.MyNo - 1].SetActive(true);
 
-        //++++++++++++++++++++++++++++++++++++++
         // ポーションステータスリストの作成
-        //++++++++++++++++++++++++++++++++++++++
         allPotionStatus = new List<GameObject[]>()
         {
             potionStatus1,    // プレイヤー1
@@ -308,9 +258,7 @@ public class GameDirectorCopy : MonoBehaviour
             potionStatus4,    // プレイヤー4
         };
 
-        //++++++++++++++++++++++++++++++++++++++
         // 自分以外のポーションステータスを表示
-        //++++++++++++++++++++++++++++++++++++++
         for (int i = 0; i < playerNum; i++)
         {
             if(i != NetworkManager.MyNo - 1)
@@ -319,27 +267,19 @@ public class GameDirectorCopy : MonoBehaviour
             }
         }
 
-        //++++++++++++++++++++++++++++++++++++++
         // NetworkManagerを取得
-        //++++++++++++++++++++++++++++++++++++++
         networkManager = GameObject.Find("NetworkManager").GetComponent<NetworkManager>();
 
-        //++++++++++++++++++++++++++++++++++++++
         // プレイヤー名を取得
-        //++++++++++++++++++++++++++++++++++++++
         for (int i = 0; i < playerNum; i++)
         {
             playerNameText[i].text = networkManager.PlayerNames[i];
         }
 
-        //++++++++++++++++++++++++++++++++++++++
         // ポーション生成フラグ
-        //++++++++++++++++++++++++++++++++++++++
         generateFlag = false;
 
-        //++++++++++++++++++++++++++++++++++++++
         // 移動フラグ
-        //++++++++++++++++++++++++++++++++++++++
         isMoved = true;
 
         for (int i = 0; i < player.Length; i++)
@@ -540,7 +480,7 @@ public class GameDirectorCopy : MonoBehaviour
     /// </summary>
     void SelectMode()
     {
-        if (deadPlayerCnt >= 3)
+        if (DeadPlayerCnt >= 3)
         {   // 終了判定
             nextMode = MODE.END_GAME;
         }
@@ -557,15 +497,11 @@ public class GameDirectorCopy : MonoBehaviour
             SetMoveIcon(nowPlayerType+1, true);
         }
 
-        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // 現在のPLターン表示
         turnText.GetComponent<Text>().text = playerNameText[nowPlayerType].text;
-        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // 自分のターンのみ行動可能に
         if (NetworkManager.MyNo == nowPlayerType + 1)
-        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         {
             if (player[nowPlayerType].PlayerState == PLAYERSTATE.FROZEN_STATE || player[nowPlayerType].PlayerState == PLAYERSTATE.CURSED_STATE || player[nowPlayerType].IsDead == true)
             { //凍っていた場合
@@ -596,9 +532,7 @@ public class GameDirectorCopy : MonoBehaviour
                                 // 移動可能フラグをfalseに
                                 isMoved = false;
 
-                                //++++++++++++++++++++++++++++++++++++++++++++++++++++//
                                 // 現PLターンの「選択した」という情報をサーバーに送る //
-                                //++++++++++++++++++++++++++++++++++++++++++++++++++++//
                                 networkManager.SendSelectUnit(z, x);
 
                                 //選択SE
@@ -619,7 +553,6 @@ public class GameDirectorCopy : MonoBehaviour
                                     cantBrewingButton[NetworkManager.MyNo - 1].SetActive(false);
 
                                     // 現PLターンの「移動した」という情報(移動先のタイル)をサーバーに送る //
-                                    // 全クライアントに移動情報を渡した後に画面に反映させる //
                                     networkManager.SendMoveUnit(x, z, tilePos.x, tilePos.z);
 
                                     //選択SE
@@ -638,7 +571,6 @@ public class GameDirectorCopy : MonoBehaviour
         }
     }
 
-    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     /// <summary>
     /// 引数座標のタイルに居るユニットを選択状態にする処理
     /// </summary>
@@ -656,9 +588,7 @@ public class GameDirectorCopy : MonoBehaviour
         // 選択ユニットを選択状態(持ち上がった状態)に変更
         selectUnit.GetComponent<UnitController>().Select();
     }
-    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     /// <summary>
     /// 引数座標のタイルに選択されたユニットを移動する処理
     /// </summary>
@@ -684,7 +614,6 @@ public class GameDirectorCopy : MonoBehaviour
         // 次のターンへ
         nextMode = MODE.FIELD_UPDATE;
     }
-    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     void FieldUpdateMode()
     {
@@ -702,8 +631,7 @@ public class GameDirectorCopy : MonoBehaviour
         int oldTurn = nowTurn;
         nowTurn = getNextTurn();
 
-        //+++++++++++++++++
-        // 爆発判定
+        /* 爆発判定 */
 
         //objectというタグ名のゲームオブジェクトを複数取得したい時
         GameObject[] objects = GameObject.FindGameObjectsWithTag("Bomb");
@@ -719,10 +647,8 @@ public class GameDirectorCopy : MonoBehaviour
             }
         }
 
-        //+++++++++++++++++
-        // 終了判定
-
-        if (deadPlayerCnt >= 3)
+        /* 終了判定 */
+        if (DeadPlayerCnt >= 3)
         {   
             nextMode = MODE.END_GAME;
         }
@@ -821,21 +747,18 @@ public class GameDirectorCopy : MonoBehaviour
     /// </summary>
     public void Brewing()
     {
-        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // 自分のターン以外生成可能に
         if (NetworkManager.MyNo != nowPlayerType + 1 && !generateFlag)
-        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         {
-            // int rndPotion = r.Next(4);
-            if (player[nowPlayerType].PlayerState == PLAYERSTATE.PARALYSIS_STATE || player[nowPlayerType].PlayerState == PLAYERSTATE.FROZEN_STATE || player[nowPlayerType].IsDead == true)
-            { //しびれていた場合または凍っていた場合
-                Debug.Log((NetworkManager.MyNo) + "Pはしびれている。ポーションが作れない！");
+            if (player[nowPlayerType].IsDead == true)
+            { //死亡しているかどうか
+                Debug.Log(NetworkManager.MyNo + "Pはしびれている。ポーションが作れない！");
             }
             else
             {
                 if (player[nowPlayerType].OwnedPotionList?.Count >= 2)
                 { //枠が埋まっていた場合
-                    Debug.Log((NetworkManager.MyNo) + "Pのポーション枠は満杯だ！！");
+                    Debug.Log(NetworkManager.MyNo + "Pのポーション枠は満杯だ！！");
                 }
                 else
                 {
@@ -854,7 +777,6 @@ public class GameDirectorCopy : MonoBehaviour
         }
     }
 
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     /// <summary>
     /// ポーション生成処理
     /// </summary>
@@ -875,9 +797,7 @@ public class GameDirectorCopy : MonoBehaviour
             player[plNo - 1].OwnedPotionList.Add(TYPE.BOMB2);
         }
     }
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     /// <summary>
     /// 指定PLNoのポーションステータスを待機に変更処理
     /// </summary>
@@ -900,9 +820,7 @@ public class GameDirectorCopy : MonoBehaviour
             allPotionStatus[plNo - 1][3].SetActive(true);
         }
     }
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     /// <summary>
     /// 指定PLNoのポーションステータス変更処理
     /// </summary>
@@ -930,7 +848,6 @@ public class GameDirectorCopy : MonoBehaviour
             StartCoroutine(ChangeStatusWait(plNo, 2.0f));
         }
     }
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     /// <summary>
     /// ポーション投擲処理
@@ -968,7 +885,6 @@ public class GameDirectorCopy : MonoBehaviour
         }
     }
 
-    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     /// <summary>
     /// ポーション投擲処理
     /// </summary>
@@ -991,9 +907,7 @@ public class GameDirectorCopy : MonoBehaviour
         unitData[z, x][0].GetComponent<UnitController>().ThrowSelect();
         unitData[z, x][0].GetComponent<UnitController>().OnThrowColliderEnable();
     }
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     /// <summary>
     /// ポーション設置処理
     /// </summary>
@@ -1002,7 +916,6 @@ public class GameDirectorCopy : MonoBehaviour
         //投擲SE
         audioSource.PlayOneShot(throwSE);
 
-        ///////////
         if (player[nowPlayerType].OwnedPotionList.Count == 1)
         {   // ポーションの持ち数が０個の時
 
@@ -1030,7 +943,6 @@ public class GameDirectorCopy : MonoBehaviour
         // 移動モードに戻る
         nowMode = MODE.MOVE_SELECT;
     }
-    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     /// <summary>
     /// ポーション使用ボタン
@@ -1042,10 +954,8 @@ public class GameDirectorCopy : MonoBehaviour
             return;
         }
 
-        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // 自分のターンのみ行動可能に
         if (NetworkManager.MyNo == nowPlayerType + 1)
-        //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         {
             if (player[nowPlayerType].PlayerState == PLAYERSTATE.FROZEN_STATE || player[nowPlayerType].IsDead == true)
             { //凍っていた場合
@@ -1127,7 +1037,7 @@ public class GameDirectorCopy : MonoBehaviour
                             deathIcons[deadList[k]-1].SetActive(true);
 
                             unitData[i, j] = new List<GameObject>();
-                            deadPlayerCnt++;
+                            DeadPlayerCnt++;
                         }
                     }
                 }

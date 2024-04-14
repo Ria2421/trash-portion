@@ -57,9 +57,9 @@ public class PotionBoom : MonoBehaviour
 
     void Start()
     {
-        bombCnt = 5;
         potionType = new PotionType();
         gameDirector = GameObject.Find("GameDirector").GetComponent<GameDirectorCopy>();
+        bombCnt = 6 - gameDirector.DeadPlayerCnt;
     }
 
     void Update()

@@ -532,6 +532,7 @@ public class NetworkManager : MonoBehaviour
     {
         // 送信用ユーザーデータの作成
         SelectData selectData = new SelectData();
+
         // 座標の代入
         selectData.plNo = MyNo; // 自分のPLNo
         selectData.z = z;       // 現在のタイル座標(z軸)
