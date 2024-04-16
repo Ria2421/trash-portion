@@ -769,7 +769,7 @@ public class GameDirectorCopy : MonoBehaviour
             { //íNÇ©Ç¢ÇÈÉ}ÉX
                 if (unitData[z, x][0].GetComponent<UnitController>().PlayerNo != player[nowTurn].PlayerNo)
                 { //ìGÇæÇ¡ÇΩèÍçá
-                    ret = true;
+                    ret = false;
                 }
             }
         }
