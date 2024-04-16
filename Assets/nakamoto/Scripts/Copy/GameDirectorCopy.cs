@@ -792,13 +792,13 @@ public class GameDirectorCopy : MonoBehaviour
         // 自分のターン以外生成可能に
         if (NetworkManager.MyNo != nowPlayerType + 1 && !generateFlag)
         {
-            if (player[nowPlayerType].IsDead == true)
+            if (player[NetworkManager.MyNo - 1].IsDead == true)
             { //死亡しているかどうか
-                Debug.Log(NetworkManager.MyNo + "Pはしびれている。ポーションが作れない！");
+                Debug.Log(NetworkManager.MyNo + "Pはしんでいる。ポーションが作れない！");
             }
             else
             {
-                if (player[nowPlayerType].OwnedPotionList?.Count >= 2)
+                if (player[NetworkManager.MyNo - 1].OwnedPotionList?.Count >= 2)
                 { //枠が埋まっていた場合
                     Debug.Log(NetworkManager.MyNo + "Pのポーション枠は満杯だ！！");
                 }
