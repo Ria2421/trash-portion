@@ -23,7 +23,7 @@ public class PotionBoom : MonoBehaviour
     /// <summary>
     /// 爆発エフェクトのプレハブ
     /// </summary>
-    public GameObject explosionPrefab;
+    [SerializeField] GameObject explosionPrefab;
 
     /// <summary>
     /// ゲームディレクター
@@ -59,7 +59,7 @@ public class PotionBoom : MonoBehaviour
     {
         potionType = new PotionType();
         gameDirector = GameObject.Find("GameDirector").GetComponent<GameDirectorCopy>();
-        bombCnt = 5 - gameDirector.DeadPlayerCnt;
+        bombCnt = 4 - gameDirector.DeadPlayerCnt;
         countText.text = bombCnt.ToString();
     }
 

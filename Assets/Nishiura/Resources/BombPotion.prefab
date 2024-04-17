@@ -5327,7 +5327,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioSource: {fileID: -5735093162683782565}
   boomSE: {fileID: 8300000, guid: 1546162372443d94c8603ba420e5e75e, type: 3}
-  explosionPrefab: {fileID: 183818, guid: 64d48cc8be380db4c9285fafe8c3c0a8, type: 3}
+  explosionPrefab: {fileID: 8632562023938185048, guid: 72115813d73050c468e46185a5a536c4,
+    type: 3}
   countText: {fileID: 4461175432402873452}
 --- !u!82 &-5735093162683782565
 AudioSource:
