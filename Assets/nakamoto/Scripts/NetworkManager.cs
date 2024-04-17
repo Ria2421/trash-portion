@@ -32,7 +32,7 @@ public class NetworkManager : MonoBehaviour
     /// <summary>
     /// 接続先IPアドレス
     /// </summary>
-    const string ipAddress = "20.194.122.141";
+    const string ipAddress = "127.0.0.1";
 
     // ↑ローカル時は"127.0.0.1"
 
@@ -161,7 +161,7 @@ public class NetworkManager : MonoBehaviour
     {
         //終了機能
         if (Input.GetKeyDown(KeyCode.Escape))
-        {//ESCキーを押した場合
+        {   //ESCキーを押した場合
 #if UNITY_EDITOR    //Unityエディタの場合
             UnityEditor.EditorApplication.isPlaying = false;
 #else   //ビルドの場合
@@ -297,13 +297,6 @@ public class NetworkManager : MonoBehaviour
 
                     case (int)EventID.InGameFlag: 
                         // ゲーム画面遷移処理
-
-                        // Jsonデシリアライズ
-                        List<int[,]> mapDatas = JsonConvert.DeserializeObject<List<int[,]>>(jsonString);
-
-                        // 受信マップデータを格納
-                        InitTileData = mapDatas[0];
-                        InitUnitData = mapDatas[1];
 
                         // ゲームシーンに遷移
                         Invoke("InGameScene", 1.5f);
@@ -532,6 +525,7 @@ public class NetworkManager : MonoBehaviour
     {
         // 送信用ユーザーデータの作成
         SelectData selectData = new SelectData();
+
         // 座標の代入
         selectData.plNo = MyNo; // 自分のPLNo
         selectData.z = z;       // 現在のタイル座標(z軸)
