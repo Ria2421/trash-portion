@@ -3,7 +3,7 @@
 // ネットワークマネージャー [NetworkManager.cs ]
 // Author:Kenta Nakamoto
 // Data:2024/02/08
-// Update:2024/03/06
+// Update:2024/05/21
 //
 //---------------------------------------------------------------
 using System.Collections;
@@ -17,6 +17,7 @@ using System;
 using UnityEngine.UI;
 using System.Linq;
 using System.Threading;
+using System.IO;
 
 public class NetworkManager : MonoBehaviour
 {
@@ -27,13 +28,12 @@ public class NetworkManager : MonoBehaviour
     /// クライアント作成
     /// </summary>
     public static TcpClient MyTcpClient
-    {  get; private set; }
+    { get; private set; }
 
     /// <summary>
     /// 接続先IPアドレス
     /// </summary>
-    const string ipAddress = "20.194.122.141";
-
+    string ipAddress = "";
     // ↑ローカル時は"127.0.0.1"
 
     /// <summary>
@@ -60,13 +60,13 @@ public class NetworkManager : MonoBehaviour
     /// 自分のプレイヤー番号
     /// </summary>
     public static int MyNo
-    {  get; set; }          // 本稼働時は{ get; private set; }
+    { get; set; }          // 本稼働時は{ get; private set; }
 
     /// <summary>
     /// マップデータ
     /// </summary>
     public static int[,] InitTileData
-    {  get; private set; }
+    { get; private set; }
 
     /// <summary>
     /// ユニット配置データ
@@ -143,6 +143,9 @@ public class NetworkManager : MonoBehaviour
     /// </summary>
     async void Start()
     {
+        // IPアドレスの外部読み込み
+        ipAddress = ReadConfig();
+
         PlayerNames = new string[playerNum];
 
         context = SynchronizationContext.Current;
@@ -249,9 +252,9 @@ public class NetworkManager : MonoBehaviour
             int length = await stream.ReadAsync(recvBuffer, 0, recvBuffer.Length);
 
             // 接続切断チェック
-            if(length <= 0)
+            if (length <= 0)
             {
-                
+
             }
 
             // 受信データからイベントIDを取り出す
@@ -265,7 +268,7 @@ public class NetworkManager : MonoBehaviour
             {
                 switch (eventID)
                 {
-                    case (int)EventID.UserData: 
+                    case (int)EventID.UserData:
                         // 各PLの名前表示処理
 
                         // Jsonデシリアライズ
@@ -278,7 +281,7 @@ public class NetworkManager : MonoBehaviour
 
                         break;
 
-                    case (int)EventID.CompleteFlag: 
+                    case (int)EventID.CompleteFlag:
                         // 各PLの準備完了表示処理
 
                         // Jsonデシリアライズ
@@ -289,13 +292,13 @@ public class NetworkManager : MonoBehaviour
 
                         break;
 
-                    case (int)EventID.InSelectFlag: 
+                    case (int)EventID.InSelectFlag:
                         // 選択画面遷移処理
 
                         NextScene("ModeSelection");
                         break;
 
-                    case (int)EventID.InGameFlag: 
+                    case (int)EventID.InGameFlag:
                         // ゲーム画面遷移処理
 
                         // ゲームシーンに遷移
@@ -324,7 +327,7 @@ public class NetworkManager : MonoBehaviour
                         // 受信データをJsonデシリアライズ
                         MoveData moveData = JsonConvert.DeserializeObject<MoveData>(jsonString);
 
-                        Vector3 pos = new Vector3(moveData.posX,0,moveData.posZ);
+                        Vector3 pos = new Vector3(moveData.posX, 0, moveData.posZ);
 
                         // 指定タイルへ現在ターンのPLオブジェクトを移動
                         directorCopy.MoveUnit(moveData.z, moveData.x, pos);
@@ -399,7 +402,7 @@ public class NetworkManager : MonoBehaviour
 
                         break;
 
-                    default: 
+                    default:
                         break;
                 }
             }, null);
@@ -458,7 +461,7 @@ public class NetworkManager : MonoBehaviour
     /// </summary>
     public async void sendUserData()
     {
-        if(nameInput.GetComponent<InputField>().text == "")
+        if (nameInput.GetComponent<InputField>().text == "")
         {   // 空文字の時は何もせずに返す
             return;
         }
@@ -521,7 +524,7 @@ public class NetworkManager : MonoBehaviour
     /// </summary>
     /// <param name="z"> z座標 </param>
     /// <param name="x"> x座標 </param>
-    public async void SendSelectUnit(int z,int x)
+    public async void SendSelectUnit(int z, int x)
     {
         // 送信用ユーザーデータの作成
         SelectData selectData = new SelectData();
@@ -589,7 +592,7 @@ public class NetworkManager : MonoBehaviour
     /// <summary>
     /// 投擲位置を送信
     /// </summary>
-    public async void SendThrowPos(float x,float z)
+    public async void SendThrowPos(float x, float z)
     {
         SetPotionData setPotionData = new SetPotionData();
 
@@ -619,5 +622,28 @@ public class NetworkManager : MonoBehaviour
         byte[] buffer = Encoding.UTF8.GetBytes(data);              // JSONをbyteに変換
         buffer = buffer.Prepend((byte)EventID.GameEnd).ToArray();  // 送信データの先頭にイベントIDを付与
         await stream.WriteAsync(buffer, 0, buffer.Length);         // JSON送信処理
+    }
+
+    // 読み込み関数
+    string ReadConfig()
+    {
+        string address = "";
+
+        // FileReadTest.txtファイルを読み込む
+        FileInfo fi = new FileInfo(Application.dataPath + "/" + "config.txt");
+        try
+        {
+            // 一行毎読み込み
+            using (StreamReader sr = new StreamReader(fi.OpenRead(), Encoding.UTF8))
+            {
+                address = sr.ReadToEnd();
+            }
+        }
+        catch (Exception e)
+        {
+
+        }
+
+        return address;
     }
 }
